@@ -8,14 +8,14 @@ int main() {
     int user_input{};
     bool is_matrix_exist{false};
 
-    int** m{nullptr};
-    std::size_t rows{0};
-    std::size_t cols{0};
+    int** m{};
+    std::size_t rows{};
+    std::size_t cols{};
 
     while (true) {
         std::cout << "\nChoose one operation and print its number:\n1. Make matrix\n2. Fill with one "
-                     "value\n3. Print\n4. Print min from each cols\n5. Delete matrix\n6. Write one value\n0. "
-                     "Exit\n";
+                     "value\n3. Print\n4. Print min from each cols\n5. Delete matrix\n6. Write one value\n7. Print max "
+                     "from each row\n0. Exit\n";
 
         if (!(std::cin >> user_input)) {
             std::cin.clear();
@@ -65,13 +65,18 @@ int main() {
             }
 
             case 1: {
+                int raw_rows{};
+                int raw_cols{};
                 std::cout << "Print size of matrix (rows cols):\n";
-                if (!(std::cin >> rows >> cols)) {
+                if (!(std::cin >> raw_rows >> raw_cols) || raw_cols < 0 || raw_rows < 0) {
                     std::cin.clear();
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cout << "Input error\n";
                     break;
                 }
+
+                cols = static_cast<std::size_t>(raw_cols);
+                rows = static_cast<std::size_t>(raw_rows);
 
                 m = lab01::MatrixCreate(rows, cols);
                 is_matrix_exist = true;
@@ -156,24 +161,30 @@ int main() {
 
             case 6: {
                 if (!is_matrix_exist) {
-                    std::cout << "Matrix already does not exist\n";
+                    std::cout << "Error, you need to create matrix first\n";
                     break;
                 }
 
                 std::cout << "Write row, col and value:\n";
 
-                std::size_t row{};
-                std::size_t col{};
+                int raw_row{};
+                int raw_col{};
                 int value{};
-                if (!(std::cin >> row >> col >> value)) {
+                if (!(std::cin >> raw_row >> raw_col >> value) || raw_col <= 0 || raw_row <= 0) {
                     std::cin.clear();
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     std::cout << "Input error\n";
                     break;
                 }
 
-                row -= 1;
-                col -= 1;
+                raw_row -= 1;
+                raw_col -= 1;
+
+                std::size_t row{};
+                std::size_t col{};
+
+                row = static_cast<std::size_t>(raw_row);
+                col = static_cast<std::size_t>(raw_col);
 
                 if (row > rows || col > cols) {
                     std::cout << "Error, index must be in range\n";
@@ -182,6 +193,22 @@ int main() {
 
                 m[row][col] = value;
                 std::cout << "Value was added\n";
+                break;
+            }
+
+            case 7: {
+                if (!is_matrix_exist) {
+                    std::cout << "Error, you need to create matrix first\n";
+                    break;
+                }
+
+                int* maxs = lab01::MatrixRowMax(m, rows, cols);
+
+                std::cout << "Max from each row:\n";
+                for (std::size_t i = 0; i < rows; ++i) {
+                    std::cout << maxs[i] << ' ';
+                }
+
                 break;
             }
 
