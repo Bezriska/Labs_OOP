@@ -32,7 +32,7 @@ int main() {
                 }
 
                 if (!lab01::TryMatrixDelete(m, rows)) {
-                    std::cout << "Error in matrix deleting, do you trust GC? (1/0)\n";
+                    std::cout << "Error in matrix deleting, exit program? (1/0)\n";
 
                     int resp{};
                     if (!(std::cin >> resp)) {
